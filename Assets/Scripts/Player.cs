@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Player : MonoBehaviour
 {
@@ -14,6 +15,12 @@ public class Player : MonoBehaviour
     public float groundCheckRadius = 0.2f;
     public LayerMask groundMask;
     
+    [Header("Jump Mechanics")]
+    public float coyoteTime = 0.2f;
+    public float jumpBufferTime = 0.2f;
+
+    private float jumpBuffer;
+    private float coyoteCounter;
     private bool isGrounded;
     private Rigidbody2D rb;
     private float horizontal;
@@ -29,9 +36,29 @@ public class Player : MonoBehaviour
         horizontal = Input.GetAxisRaw("Horizontal");
         
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundMask);
-        
-        if (isGrounded && Input.GetButtonDown("Jump"))
+
+        if (isGrounded)
         {
+            coyoteCounter = coyoteTime;
+        }
+        else
+        {
+            coyoteCounter -= Time.deltaTime;
+        }
+
+        if (Input.GetButtonDown("Jump"))
+        {
+            jumpBuffer = jumpBufferTime;
+        }
+        else
+        {
+            jumpBuffer -= Time.deltaTime;
+        }
+        
+        if (coyoteCounter > 0 && jumpBuffer > 0)
+        {
+            jumpBuffer = 0;
+            
             var jumpVelocity = Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y);
             rb.velocity = new Vector2(rb.velocity.x, jumpVelocity);
         }
