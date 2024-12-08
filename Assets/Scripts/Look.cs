@@ -18,5 +18,6 @@ public class Look : MonoBehaviour
         var worldPoint = cam.ScreenToWorldPoint(mousePosition);
         var direction = (worldPoint - cam.transform.position).normalized;
         var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 }
